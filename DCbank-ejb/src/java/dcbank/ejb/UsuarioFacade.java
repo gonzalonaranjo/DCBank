@@ -8,11 +8,13 @@ package dcbank.ejb;
 import dcbank.entity.Usuario;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
- * @author Ofviak
+ * @author Pedro Ávila 
  */
 @Stateless
 public class UsuarioFacade extends AbstractFacade<Usuario> {
@@ -27,6 +29,27 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
 
     public UsuarioFacade() {
         super(Usuario.class);
+    }
+    
+    /**
+     * Pedro Ávila.
+     * Este método realiza una búsqueda de usuarios en mydb.
+     *
+     * @param dni DNI del usuario a buscar en la base de datos.
+     * @return Usuario asociado a @dni. Null si no existe el usuario.
+     */
+    public Usuario buscarPorDni (String dni) {
+        Query q = this.em.createNamedQuery("Usuario.findByDni",Usuario.class);
+        q.setParameter("dni", dni);
+        
+        Usuario u;
+        try{
+           u = (Usuario) q.getSingleResult();
+        }catch(NoResultException ex){
+           u = null;
+        }
+        
+        return  u;        
     }
     
 }
